@@ -1,14 +1,50 @@
-# YouTube Business News Scraper
+# YouTube News Scraper
 
-A Node.js application that scrapes YouTube's business news feed and extracts video information including titles, channel names, and URLs. The data is saved to a CSV file for easy analysis.
+A Node.js application that intelligently scrapes YouTube's news feed, organizing videos by their subject matter categories. It captures how YouTube groups related news videos under major event topics of the day.
 
 ## Features
 
-- Automated scraping of YouTube's business news feed
-- Extracts video titles, channel names, and URLs
-- Handles dynamic content loading through scrolling
-- Saves results in CSV format
-- Configurable browser settings and timeouts
+- **Smart Category Detection**: 
+  - Automatically identifies major news topics/events
+  - Groups related videos under their respective categories
+  - Adapts to YouTube's dynamic daily news organization
+
+- **Robust Data Collection**:
+  - Extracts video titles, channel names, and URLs
+  - Removes duplicate entries
+  - Handles dynamic content loading through scrolling
+  - Validates all collected data
+
+- **Error Handling & Reliability**:
+  - Graceful retry mechanism (max 3 attempts)
+  - Proper cleanup of resources
+  - Validation at multiple stages
+  - Clear error reporting
+
+- **Flexible Configuration**:
+  - Switch between general news and business news
+  - Configurable timeouts and retry settings
+  - Adjustable scroll behavior
+  - Browser settings customization
+
+## Output Structure
+
+The scraper saves data in JSON format with this structure:
+```javascript
+{
+  "Major Event Topic 1": [
+    {
+      "url": "https://www.youtube.com/watch?v=...",
+      "title": "Video Title",
+      "channel": "Channel Name"
+    },
+    // More videos about this topic...
+  ],
+  "Major Event Topic 2": [
+    // Videos about another topic...
+  ]
+}
+```
 
 ## Prerequisites
 
@@ -19,63 +55,56 @@ A Node.js application that scrapes YouTube's business news feed and extracts vid
 
 1. Clone this repository or download the source code
 2. Install the dependencies:
-```bash
-npm install
+   ```bash
+   npm install
+   ```
+
+## Configuration
+
+The script uses a configuration object that can be modified in `index.js`:
+
+```javascript
+const CONFIG = {
+    urls: {
+        general: 'https://www.youtube.com/feed/news_destination',
+        business: 'https://www.youtube.com/feed/news_destination/business'
+    },
+    retry: {
+        maxAttempts: 3,
+        delayMs: 5000
+    },
+    // ... other settings
+};
 ```
 
 ## Usage
 
-To run the scraper:
+Run the script with:
 ```bash
-npm start
+node index.js
 ```
 
 The script will:
-1. Launch a Chrome browser instance
-2. Navigate to YouTube's business news feed
-3. Scroll through the page to load more content
-4. Extract video information
-5. Save the results to `youtube_news_videos.csv` in the project directory
-
-## Configuration
-
-The script includes several configurable options in `index.js`:
-- Browser viewport size (default: 1920x1080)
-- Page load timeout (default: 60 seconds)
-- Number of scroll iterations (default: 3)
-- Wait time between scrolls (default: 2 seconds)
-
-## Project Structure
-
-```
-├── index.js           # Main script file
-├── package.json       # Project dependencies and configuration
-└── README.md         # Project documentation
-```
-
-## Dependencies
-
-- [Puppeteer](https://pptr.dev/) (v21.6.1) - Headless Chrome Node.js API
+1. Launch a browser and navigate to YouTube's news feed
+2. Identify major news topics/categories
+3. Collect videos for each category
+4. Save the results in `youtube_news_videos.json`
 
 ## Error Handling
 
-The script includes robust error handling for common scenarios:
-- Network timeouts
-- Page load failures
-- Content selector failures
-- CSV writing errors
+The script includes several safety features:
+- Retries on network failures (max 3 attempts)
+- Validates data before saving
+- Cleans up resources (browser) even if errors occur
+- Provides detailed error messages
 
-## Output Format
+## Limitations
 
-The CSV file contains the following columns:
-- Title: The video title
-- Channel: The channel name
-- URL: Direct link to the video
-
-## License
-
-This project is open source and available under the MIT License.
+- Depends on YouTube's page structure (may need updates if YouTube changes)
+- Requires stable internet connection
+- May be affected by YouTube's rate limiting
+- Browser automation might be detected by YouTube
 
 ## Contributing
 
-Feel free to open issues or submit pull requests for any improvements.
+Feel free to submit issues and enhancement requests!
