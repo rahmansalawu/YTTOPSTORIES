@@ -17,6 +17,8 @@
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const youtubeEnhancer = require('./youtubeEnhancer');
+const { extractAndCleanCaptions } = require('./captionCleaner');
 
 /**
  * Configuration settings for the scraper
@@ -292,18 +294,39 @@ function saveToJSON(data, filename) {
     }
 }
 
-// Configuration
-const outputFile = path.join(__dirname, 'youtube_news_videos.json');
-
 // Main execution
 (async () => {
     try {
-        // You can easily switch between news types
-        const videoData = await fetchYoutubeLinks(CONFIG.urls.general); // or CONFIG.urls.business
-        saveToJSON(videoData, outputFile);
-        console.log('Process completed successfully');
+        // Step 1: Fetch videos
+        console.log('Step 1: Fetching videos...');
+        const videoData = await fetchYoutubeLinks(CONFIG.urls.general);
+        const initialJson = path.join(__dirname, 'youtube_news_videos.json');
+        await saveToJSON(videoData, initialJson);
+        console.log('Initial scraping completed');
+
+        // Step 2: Enhance videos
+        console.log('\nStep 2: Enhancing videos...');
+        const data = await youtubeEnhancer.loadJsonFile(initialJson);
+        const categories = Object.keys(data);
+        let allEnhancedData = {};
+
+        // Process each category
+        for (let i = 0; i < categories.length; i++) {
+            console.log(`\nProcessing category ${i + 1} of ${categories.length}`);
+            const enhancedData = await youtubeEnhancer.processCategory(data, i);
+            Object.assign(allEnhancedData, enhancedData);
+        }
+        await youtubeEnhancer.saveEnhancedData(allEnhancedData);
+        console.log('Enhancement completed');
+
+        // Step 3: Clean captions
+        console.log('\nStep 3: Cleaning captions...');
+        const enhancedJson = path.join(__dirname, 'enhanced_youtube_news_videos.json');
+        const cleanedJson = path.join(__dirname, 'cleaned_captions.json');
+        await extractAndCleanCaptions(enhancedJson, cleanedJson);
+        console.log('Pipeline completed successfully');
     } catch (error) {
-        console.error('Failed to fetch videos:', error.message);
-        process.exit(1); // Exit with error code
+        console.error('Pipeline failed:', error.message);
+        process.exit(1);
     }
 })();

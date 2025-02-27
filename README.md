@@ -1,110 +1,96 @@
-# YouTube News Scraper
+# YouTube News Video Processor
 
-A Node.js application that intelligently scrapes YouTube's news feed, organizing videos by their subject matter categories. It captures how YouTube groups related news videos under major event topics of the day.
+A Node.js application that scrapes, processes, and enhances YouTube news videos with captions, maintaining category organization throughout the pipeline.
 
 ## Features
 
-- **Smart Category Detection**: 
-  - Automatically identifies major news topics/events
-  - Groups related videos under their respective categories
-  - Adapts to YouTube's dynamic daily news organization
-
-- **Robust Data Collection**:
-  - Extracts video titles, channel names, and URLs
-  - Removes duplicate entries
-  - Handles dynamic content loading through scrolling
-  - Validates all collected data
-
-- **Error Handling & Reliability**:
-  - Graceful retry mechanism (max 3 attempts)
-  - Proper cleanup of resources
-  - Validation at multiple stages
-  - Clear error reporting
-
-- **Flexible Configuration**:
-  - Switch between general news and business news
-  - Configurable timeouts and retry settings
-  - Adjustable scroll behavior
-  - Browser settings customization
-
-## Output Structure
-
-The scraper saves data in JSON format with this structure:
-```javascript
-{
-  "Major Event Topic 1": [
-    {
-      "url": "https://www.youtube.com/watch?v=...",
-      "title": "Video Title",
-      "channel": "Channel Name"
-    },
-    // More videos about this topic...
-  ],
-  "Major Event Topic 2": [
-    // Videos about another topic...
-  ]
-}
-```
+- **Video Scraping**: Fetches news videos from YouTube's news feed using Puppeteer
+- **Category Processing**: Processes videos by category, maintaining the hierarchical structure
+- **Caption Enhancement**: Fetches and cleans captions for each video
+- **Caching System**: Tracks processed videos to minimize API calls
+- **Rate Limiting**: Implements delays between API calls to respect YouTube's limits
+- **Structured Output**: 
+  - `youtube_news_videos.json`: Raw scraped video data
+  - `enhanced_youtube_news_videos.json`: Enhanced video data with details and captions
+  - `cleaned_captions.json`: Cleaned captions organized by category
 
 ## Prerequisites
 
-- Node.js (v12 or higher)
-- npm (Node Package Manager)
+- Node.js (v14 or higher)
+- YouTube Data API key
+- Puppeteer for web scraping
 
 ## Installation
 
-1. Clone this repository or download the source code
-2. Install the dependencies:
-   ```bash
-   npm install
-   ```
-
-## Configuration
-
-The script uses a configuration object that can be modified in `index.js`:
-
-```javascript
-const CONFIG = {
-    urls: {
-        general: 'https://www.youtube.com/feed/news_destination',
-        business: 'https://www.youtube.com/feed/news_destination/business'
-    },
-    retry: {
-        maxAttempts: 3,
-        delayMs: 5000
-    },
-    // ... other settings
-};
+1. Clone the repository
+2. Install dependencies:
+```bash
+npm install
+```
+3. Create a `.env` file with your YouTube API key:
+```
+YOUTUBE_API_KEY=your_api_key_here
 ```
 
 ## Usage
 
-Run the script with:
+Run the complete pipeline:
 ```bash
 node index.js
 ```
 
-The script will:
-1. Launch a browser and navigate to YouTube's news feed
-2. Identify major news topics/categories
-3. Collect videos for each category
-4. Save the results in `youtube_news_videos.json`
+This will:
+1. Scrape news videos from YouTube
+2. Enhance videos with additional details and captions
+3. Clean and organize captions by category
+
+## Output Structure
+
+### cleaned_captions.json
+```javascript
+{
+  "Category1": {
+    "VideoTitle1": "cleaned caption text",
+    "VideoTitle2": "cleaned caption text"
+  },
+  "Category2": {
+    "VideoTitle3": "cleaned caption text"
+  }
+}
+```
+
+### enhanced_youtube_news_videos.json
+Contains detailed video information including:
+- Title
+- Description
+- View count
+- Like count
+- Raw captions
+- Category
+
+## Cache Management
+
+The system maintains a cache of processed videos in `processed_videos.json` to:
+- Prevent duplicate processing
+- Minimize API calls
+- Track processing timestamps
+
+## Rate Limiting
+
+- 2-second delay between video processing
+- Maximum 5 videos per category
+- Skips videos without captions
 
 ## Error Handling
 
-The script includes several safety features:
-- Retries on network failures (max 3 attempts)
-- Validates data before saving
-- Cleans up resources (browser) even if errors occur
-- Provides detailed error messages
-
-## Limitations
-
-- Depends on YouTube's page structure (may need updates if YouTube changes)
-- Requires stable internet connection
-- May be affected by YouTube's rate limiting
-- Browser automation might be detected by YouTube
+- Logs errors without interrupting the pipeline
+- Skips videos with disabled or unavailable captions
+- Maintains processing even if individual video enhancement fails
 
 ## Contributing
 
 Feel free to submit issues and enhancement requests!
+
+## License
+
+MIT License

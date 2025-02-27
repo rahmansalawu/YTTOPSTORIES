@@ -7,6 +7,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "puppeteer": "^21.6.1"
+    "dotenv": "^16.4.7",
+    "googleapis": "^144.0.0",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^21.6.1",
+    "youtube-transcript": "^1.2.1"
   }
 }
