@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube News Feed</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fab fa-youtube"></i>
+                <h1>YouTube News Feed</h1>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search news...">
+                <button id="search-btn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="categories-container">
+            <h2>Categories</h2>
+            <div id="categories-list" class="categories-list">
+                <!-- Categories will be dynamically added here -->
+                <button class="category-btn active" data-category="all">All News</button>
+            </div>
+        </div>
+
+        <div class="feed-container">
+            <div id="feed" class="feed">
+                <!-- News items will be dynamically added here -->
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading news feed...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal" id="video-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="video-container">
+                    <iframe id="video-frame" frameborder="0" allowfullscreen></iframe>
+                </div>
+                <div class="video-info">
+                    <h3 id="modal-title"></h3>
+                    <p id="modal-channel"></p>
+                    <div class="video-stats">
+                        <span id="modal-views"><i class="fas fa-eye"></i> 0</span>
+                        <span id="modal-likes"><i class="fas fa-thumbs-up"></i> 0</span>
+                        <span id="modal-comments"><i class="fas fa-comment"></i> 0</span>
+                    </div>
+                    <div class="video-description">
+                        <h4>Description:</h4>
+                        <p id="modal-description"></p>
+                    </div>
+                    <div class="video-captions">
+                        <h4>Captions:</h4>
+                        <p id="modal-captions"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
